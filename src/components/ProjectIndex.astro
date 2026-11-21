@@ -1,0 +1,212 @@
+---
+/*
+ * Every public project, by area, as an index: name and one line, what it
+ * speaks and is written in, its latest published version, and its docs and
+ * source. The list is @pulzr/docs-theme's projects.mjs; versions are read
+ * from the registries when the site builds (src/releases.mjs).
+ */
+import { Mark } from '@pulzr/docs-theme/components';
+import { projects, areas } from '@pulzr/docs-theme/projects';
+import { marks } from '@pulzr/docs-theme';
+import { releases } from '../releases.mjs';
+
+const latest = await releases(projects);
+const sections = areas
+	.map((area) => ({ ...area, projects: projects.filter((p) => p.area === area.id) }))
+	.filter((a) => a.projects.length > 0);
+const registry: Record<string, string> = { crates: marks.crates.name, npm: marks.npm.name, pypi: marks.pypi.name };
+---
+
+<div class="pz-index not-content">
+	<div class="head" aria-hidden="true">
+		<span>Project</span>
+		<span>Speaks and is written in</span>
+		<span>Latest release</span>
+		<span></span>
+	</div>
+	{sections.map((area) => (
+		<section aria-labelledby={`area-${area.id}`}>
+			<h2 id={`area-${area.id}`}>
+				{area.name}
+				{area.description && <span class="area-desc">{area.description}</span>}
+			</h2>
+			<ul>
+				{area.projects.map((p) => (
+					<li class="row">
+						<div class="what">
+							<a class="name" href={p.docs ?? p.repo}>{p.name}</a>
+							<p>{p.description}</p>
+						</div>
+						<ul class="stack" aria-label="Speaks and is written in">
+							{p.stack.map((id) => <li><Mark id={id} /></li>)}
+						</ul>
+						<div class="release">
+							{(latest.get(p.id) ?? []).map((r) => (
+								<a href={r.url} title={r.name ? `${r.name} ${r.version}` : `Release ${r.version}`}>
+									{r.registry === 'github' ? <Mark id="github" name={false} decorative /> : <span class="reg">{registry[r.registry]}</span>}
+									<span class="ver">{r.version}</span>
+								</a>
+							))}
+						</div>
+						<div class="links">
+							{p.docs && <a href={p.docs}>Docs</a>}
+							<a href={p.repo}><Mark id="github" name={false} decorative />Source</a>
+						</div>
+					</li>
+				))}
+			</ul>
+		</section>
+	))}
+</div>
+
+<style>
+	.pz-index {
+		--cols: minmax(0, 1fr) 15rem 10.5rem 7.5rem;
+		margin: 0.5rem 0 2.5rem;
+		font-size: var(--sl-text-sm);
+	}
+	.head {
+		display: grid;
+		grid-template-columns: var(--cols);
+		gap: 1rem;
+		padding: 0 0.75rem 0.4rem;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	section + section {
+		margin-top: 1.5rem;
+	}
+	h2 {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0.75rem;
+		margin: 0;
+		padding: 0.5rem 0.75rem;
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+		color: var(--sl-color-white);
+		background: var(--pz-surface);
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--pz-radius-md) var(--pz-radius-md) 0 0;
+	}
+	.area-desc {
+		font-weight: 400;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	section > ul {
+		border: 1px solid var(--sl-color-hairline);
+		border-top: none;
+		border-radius: 0 0 var(--pz-radius-md) var(--pz-radius-md);
+	}
+	.row {
+		display: grid;
+		grid-template-columns: var(--cols);
+		gap: 0.35rem 1rem;
+		align-items: center;
+		margin: 0;
+		padding: 0.55rem 0.75rem;
+	}
+	.row + .row {
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+	.name {
+		font-family: var(--sl-font-mono);
+		font-weight: 600;
+		color: var(--sl-color-white);
+		text-decoration: none;
+	}
+	.name:hover {
+		color: var(--sl-color-accent);
+	}
+	.what p {
+		margin: 0.1rem 0 0;
+		font-size: 0.8125rem;
+		line-height: 1.45;
+		color: var(--pz-text-secondary);
+	}
+	.stack {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+	.stack li {
+		margin: 0;
+		padding: 0.05rem 0.4rem;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-2);
+		border: 1px solid var(--sl-color-hairline-light);
+		border-radius: var(--pz-radius-sm);
+	}
+	.release {
+		display: grid;
+		gap: 0.15rem;
+		justify-items: start;
+	}
+	.release a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+	}
+	.release a:hover .ver {
+		color: var(--sl-color-accent);
+	}
+	.reg {
+		color: var(--sl-color-gray-3);
+	}
+	.ver {
+		font-family: var(--sl-font-mono);
+		font-size: 0.8125rem;
+		color: var(--sl-color-white);
+	}
+	.links {
+		display: flex;
+		gap: 0.85rem;
+		justify-content: flex-end;
+		font-size: var(--sl-text-xs);
+		font-weight: 500;
+	}
+	.links a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+	}
+	.links a:hover {
+		color: var(--sl-color-accent);
+	}
+	a:focus-visible {
+		outline: 2px solid var(--sl-color-accent);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+	/* Narrow: name and line first, then the rest, wrapped. */
+	@media (max-width: 56rem) {
+		.head {
+			display: none;
+		}
+		.row {
+			grid-template-columns: 1fr auto;
+			align-items: start;
+		}
+		.what,
+		.stack {
+			grid-column: 1 / -1;
+		}
+		.release {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+		}
+	}
+</style>

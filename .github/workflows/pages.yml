@@ -1,6 +1,7 @@
 # oss.pulzr.net: build the landing page and publish it to GitHub Pages from
-# main. The build fails on a broken internal link. Weekly too, so a project
-# added to @pulzr/docs-theme's projects.mjs shows once Dependabot brings it.
+# main. The build fails on a broken internal link. Daily too, so each
+# project's latest release, read from its registries at build time, stays
+# current.
 
 name: pages
 on:
@@ -8,6 +9,8 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *'
 
 permissions:
   contents: read
@@ -29,6 +32,9 @@ jobs:
       - run: npm ci
       - name: Build the site (fails on a broken internal link)
         run: npm run build
+        env:
+          # Latest GitHub releases, read when the site builds.
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Every project in the list has its card
         run: |
           node --input-type=module -e "

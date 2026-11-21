@@ -11,7 +11,7 @@ export default defineConfig({
 	build: { format: 'file' },
 	integrations: [
 		starlight({
-			title: 'Pulzar open source',
+			title: 'oss.pulzr.net',
 			description: 'The gateway OS, radio stacks, device libraries and tools under Pulzr, in the open.',
 			plugins: pulzarPlugins({ project: 'pulzar-net.github.io', siteDir: '.' }),
 			sidebar: [],
