@@ -1,0 +1,25 @@
+---
+title: Projects
+description: The gateway OS, radio stacks, device libraries and tools under Pulzr, built in the open and usable on their own.
+template: splash
+---
+
+import { Hero } from '@pulzr/docs-theme/components';
+import ProjectDirectory from '../../components/ProjectDirectory.astro';
+
+<Hero
+	eyebrow="Pulzar open source"
+	title="The open layers under Pulzr"
+	tagline="The gateway OS, the radio stacks, the device libraries and the tools under Pulzr, built in the open. Each one is maintained by Pulzar and usable on its own, with or without the Pulzr platform."
+	actions={[
+		{ text: 'pulzar-net on GitHub', link: 'https://github.com/pulzar-net', icon: 'github' },
+		{ text: 'pulzr.net', link: 'https://pulzr.net', variant: 'minimal', icon: 'external' },
+	]}
+/>
+
+<ProjectDirectory />
+
+**Security:** report a vulnerability privately through its repository's
+*Security → Report a vulnerability*, never in a public issue.
+**Contributing:** each repository's `CONTRIBUTING.md` explains how to build,
+test and send a change.

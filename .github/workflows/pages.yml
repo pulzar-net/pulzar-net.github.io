@@ -1,0 +1,59 @@
+# oss.pulzr.net: build the landing page and publish it to GitHub Pages from
+# main. The build fails on a broken internal link. Weekly too, so a project
+# added to @pulzr/docs-theme's projects.mjs shows once Dependabot brings it.
+
+name: pages
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build the site (fails on a broken internal link)
+        run: npm run build
+      - name: Every project in the list has its card
+        run: |
+          node --input-type=module -e "
+            import { projects } from '@pulzr/docs-theme/projects';
+            import { readFileSync } from 'node:fs';
+            const html = readFileSync('dist/index.html', 'utf8');
+            const missing = projects.filter((p) => !html.includes('href=\"' + p.repo + '\"'));
+            if (missing.length) { console.error('missing:', missing.map((p) => p.id).join(', ')); process.exit(1); }
+            console.log(projects.length + ' projects listed');
+          "
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: [build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
