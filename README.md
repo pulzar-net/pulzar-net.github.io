@@ -2,7 +2,7 @@
 
 [![pages](https://github.com/pulzar-net/pulzar-net.github.io/actions/workflows/pages.yml/badge.svg)](https://github.com/pulzar-net/pulzar-net.github.io/actions/workflows/pages.yml)
 
-The landing page for Pulzar's open-source projects, at
+The landing page for Pulzr's open-source projects, at
 **[oss.pulzr.net](https://oss.pulzr.net/)**.
 
 This is the `pulzar-net` organization's GitHub Pages site. Its custom domain,

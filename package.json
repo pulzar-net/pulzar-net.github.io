@@ -2,14 +2,14 @@
   "name": "oss-pulzr-net",
   "private": true,
   "type": "module",
-  "description": "oss.pulzr.net: the landing page for Pulzar's open-source projects, on the Pulzar docs theme.",
+  "description": "oss.pulzr.net: the landing page for Pulzr's open-source projects, on the Pulzr docs theme.",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build"
   },
   "dependencies": {
     "@astrojs/starlight": "0.43.1",
-    "@pulzr/docs-theme": "0.6.1",
+    "@pulzr/docs-theme": "0.6.2",
     "astro": "7.4.13"
   }
 }
